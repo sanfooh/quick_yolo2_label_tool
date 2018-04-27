@@ -708,5 +708,15 @@ namespace YoloLabelTool
         }
         #endregion
 
+        private void linkLabelVideo_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://edu.csdn.net/course/detail/7620");
+        }
+
+        private void linkLabelGithub_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://github.com/sanfooh/quick_yolo2_label_tool");
+        }
+
     }
 }

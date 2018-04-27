@@ -68,6 +68,8 @@
             this.label2 = new System.Windows.Forms.Label();
             this.buttonDownlaodImage = new System.Windows.Forms.Button();
             this.numericUpDownCount = new System.Windows.Forms.NumericUpDown();
+            this.linkLabelVideo = new System.Windows.Forms.LinkLabel();
+            this.linkLabelGithub = new System.Windows.Forms.LinkLabel();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPercent)).BeginInit();
@@ -319,6 +321,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.linkLabelGithub);
+            this.groupBox1.Controls.Add(this.linkLabelVideo);
             this.groupBox1.Controls.Add(this.label9);
             this.groupBox1.Controls.Add(this.numericUpDownZoomHeight);
             this.groupBox1.Controls.Add(this.label8);
@@ -520,6 +524,28 @@
             0,
             0});
             // 
+            // linkLabelVideo
+            // 
+            this.linkLabelVideo.AutoSize = true;
+            this.linkLabelVideo.Location = new System.Drawing.Point(463, 46);
+            this.linkLabelVideo.Name = "linkLabelVideo";
+            this.linkLabelVideo.Size = new System.Drawing.Size(79, 13);
+            this.linkLabelVideo.TabIndex = 17;
+            this.linkLabelVideo.TabStop = true;
+            this.linkLabelVideo.Text = "相关教学视频";
+            this.linkLabelVideo.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelVideo_LinkClicked);
+            // 
+            // linkLabelGithub
+            // 
+            this.linkLabelGithub.AutoSize = true;
+            this.linkLabelGithub.Location = new System.Drawing.Point(463, 77);
+            this.linkLabelGithub.Name = "linkLabelGithub";
+            this.linkLabelGithub.Size = new System.Drawing.Size(43, 13);
+            this.linkLabelGithub.TabIndex = 18;
+            this.linkLabelGithub.TabStop = true;
+            this.linkLabelGithub.Text = "源代码";
+            this.linkLabelGithub.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelGithub_LinkClicked);
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -589,6 +615,8 @@
         private System.Windows.Forms.Button buttonCreate;
         private System.Windows.Forms.NumericUpDown numericUpDownPercent;
         private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.LinkLabel linkLabelGithub;
+        private System.Windows.Forms.LinkLabel linkLabelVideo;
 
     }
 }
