@@ -1,6 +1,0 @@
-classes= {0}
-train  = {1}train.txt
-valid  = {1}test.txt
-names = {2}obj.names
-backup = {3}
-

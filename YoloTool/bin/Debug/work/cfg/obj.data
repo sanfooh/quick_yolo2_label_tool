@@ -1,5 +1,0 @@
-classes= 1
-train  = /root/darknet/work/train.txt
-valid  = /root/darknet/work/test.txt
-names = /root/darknet/work/cfg/obj.names
-backup = /root/darknet/work/backup/
