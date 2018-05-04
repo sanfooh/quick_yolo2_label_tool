@@ -13,6 +13,8 @@ using System.Threading;
 using System.Net;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using System.Drawing.Imaging;
+using TFLabelTool;
 
 namespace YoloLabelTool
 {
@@ -26,6 +28,7 @@ namespace YoloLabelTool
         string testTxtFilePath = "";
         string objDataFilePath = "";
         string objCfgFilePath = "";
+        string preWeightPath = "";
         string backupFolder = "";
 
         const int MaxPageIndex = 1000;
@@ -43,11 +46,15 @@ namespace YoloLabelTool
         BackgroundWorker downloadImageThread = new BackgroundWorker();
         bool isDownloadImageThreadRun = false;
 
+        BackgroundWorker trainThread = new BackgroundWorker();
+        bool isSrainThreadThreadRun = false;
+
         private Point RectStartPoint;
         private Rectangle Rect = new Rectangle();
         private Brush selectionBrush = new SolidBrush(Color.FromArgb(128, 72, 145, 220));
 
-
+        string[] userAgent = { "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-us) AppleWebKit/534.50 (KHTML, like Gecko) Version/5.1 Safari/534.50", "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; .NET4.0C; .NET4.0E; .NET CLR 2.0.50727; .NET CLR 3.0.30729; .NET CLR 3.5.30729; InfoPath.3; rv:11.0) like Gecko", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_0) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.56 Safari/535.11", 
+                                     "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; Trident/4.0; SE 2.X MetaSr 1.0; SE 2.X MetaSr 1.0; .NET CLR 2.0.50727; SE 2.X MetaSr 1.0)", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36"};
 
         public FormMain()
         {
@@ -57,6 +64,7 @@ namespace YoloLabelTool
         {
             outputPath = String.Format("{0}\\{1}", Application.StartupPath, "output");
             imagePath = String.Format("{0}\\{1}\\", outputPath, "image");
+            preWeightPath = String.Format("{0}\\{1}\\", Application.StartupPath, "weight");
             cfgPath = String.Format("{0}\\{1}\\", outputPath, "cfg");
             objNamesPath = String.Format("{0}\\{1}", cfgPath, "obj.names");
             objDataFilePath = String.Format("{0}\\{1}", cfgPath, "obj.data");
@@ -65,7 +73,7 @@ namespace YoloLabelTool
             testTxtFilePath = String.Format("{0}\\{1}", outputPath, "test.txt");
             backupFolder = String.Format("{0}\\{1}\\", outputPath, "backup");
             imageDownloadPath = String.Format("{0}\\{1}", Application.StartupPath, "download");
-
+            
             if (!Directory.Exists(outputPath))
             {
                 Directory.CreateDirectory(outputPath);
@@ -82,6 +90,10 @@ namespace YoloLabelTool
             {
                 Directory.CreateDirectory(cfgPath);
             }
+            if (!Directory.Exists(preWeightPath))
+            {
+                Directory.CreateDirectory(preWeightPath);
+            }
 
             LoadFiles();
 
@@ -92,6 +104,35 @@ namespace YoloLabelTool
             downloadImageThread.ProgressChanged += new ProgressChangedEventHandler(downloadImageThread_ProgressChanged);
             downloadImageThread.RunWorkerCompleted += new RunWorkerCompletedEventHandler(downloadImageThread_RunWorkerCompleted);
             downloadImageThread.WorkerReportsProgress = true;
+
+            trainThread.DoWork += new DoWorkEventHandler(trainThread_DoWork);
+            trainThread.RunWorkerCompleted += new RunWorkerCompletedEventHandler(trainThread_RunWorkerCompleted);   
+        }
+
+        void trainThread_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            //MessageBox.Show("ok");
+        }
+
+        void trainThread_DoWork(object sender, DoWorkEventArgs e)
+        {
+            Process proc = null;
+            try
+            {
+                var bat = String.Format("cd \"{0}\"\n", Application.StartupPath) + String.Format("\"{0}/darknet/darknet_no_gpu.exe\" detector train \"{0}/output/cfg/obj.data\" \"{0}/output/cfg/obj.cfg\" \"{0}/darknet19_448.conv.23\" -dont_show \n pause", Application.StartupPath);
+                File.WriteAllText("train.bat", bat);
+
+                proc = new Process();
+                proc.StartInfo.FileName = @"train.bat";
+                proc.StartInfo.Arguments = string.Format("10");//this is argument
+                proc.StartInfo.CreateNoWindow = false;
+                proc.Start();
+                proc.WaitForExit();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception Occurred :{0},{1}", ex.Message, ex.StackTrace.ToString());
+            }
         }
 
 
@@ -161,7 +202,7 @@ namespace YoloLabelTool
             {
                 content += item + "\n";
             }
-            File.WriteAllText(objNamesPath,content.Trim());
+            File.WriteAllText(objNamesPath, content.Trim());
         }
 
         void CreateCfgFile()
@@ -173,7 +214,7 @@ namespace YoloLabelTool
 
         void CrateObjdataFile()
         {
-            string objDataFileContent = String.Format(File.ReadAllText("obj.data"), listBoxLableIndex.Items.Count);
+            string objDataFileContent = String.Format(File.ReadAllText("obj.data"), listBoxLableIndex.Items.Count, Application.StartupPath);
             File.WriteAllText(objDataFilePath, objDataFileContent.Trim());
         }
 
@@ -181,26 +222,26 @@ namespace YoloLabelTool
         {
             List<string> filePaths = new List<string>();
             foreach (var item in listBoxFiles.Items)
-	        {
-		         filePaths.Add(item.ToString());
-	        }
+            {
+                filePaths.Add(item.ToString());
+            }
             filePaths.Sort(delegate(string a, string b) { return (new Random()).Next(-1, 1); });
             var testCount = (int)((double)filePaths.Count() * (int)numericUpDownPercent.Value / 100);
-            var testTxtFileContent="";
-            var trainTxtFileContent="";
+            var testTxtFileContent = "";
+            var trainTxtFileContent = "";
             for (int i = 0; i < filePaths.Count(); i++)
-			{
-                if (i<testCount)
-	            {
-                    testTxtFileContent+=filePaths[i]+"\n";
-	            }
+            {
+                if (i < testCount)
+                {
+                    testTxtFileContent += filePaths[i] + "\n";
+                }
                 else
                 {
-                    trainTxtFileContent+=filePaths[i]+"\n";
+                    trainTxtFileContent += filePaths[i] + "\n";
                 }
-			}
-            File.WriteAllText(testTxtFilePath,testTxtFileContent.Trim());
-            File.WriteAllText(trainTxtFilePath,trainTxtFileContent.Trim());
+            }
+            File.WriteAllText(testTxtFilePath, testTxtFileContent.Trim());
+            File.WriteAllText(trainTxtFilePath, trainTxtFileContent.Trim());
         }
 
 
@@ -586,6 +627,8 @@ namespace YoloLabelTool
             }
 
         }
+
+
         void downloadImageThread_DoWork(object sender, DoWorkEventArgs e)
         {
             int imageCount = 0;
@@ -593,6 +636,8 @@ namespace YoloLabelTool
             {
                 HttpWebRequest req = (HttpWebRequest)WebRequest.Create("http://image.baidu.com/search/avatarjson?tn=resultjsonavatarnew&ie=utf-8&word="
                     + Uri.EscapeUriString(imageDownloadKey) + "&cg=girl&pn=" + (i + 1) * 60 + "&rn=60&itg=0&z=0&fr=&width=&height=&lm=-1&ic=0&s=0&st=-1&gsm=360600003c");
+        
+    
                 using (HttpWebResponse res = (HttpWebResponse)req.GetResponse())
                 {
                     if (res.StatusCode == HttpStatusCode.OK)
@@ -617,6 +662,7 @@ namespace YoloLabelTool
                                         string path = String.Format("{0}/{1}.jpg", imageDownloadPath, imageDownloadPre + imageCount.ToString());
                                         HttpWebRequest reqImage = (HttpWebRequest)WebRequest.Create(objUrl);
                                         reqImage.Referer = "http://image.baidu.com/";
+                                        reqImage.UserAgent = userAgent[new Random(DateTime.Now.Millisecond).Next(userAgent.Length)];
                                         using (HttpWebResponse resImage = (HttpWebResponse)reqImage.GetResponse())
                                         {
                                             if (resImage.StatusCode == HttpStatusCode.OK)
@@ -624,7 +670,16 @@ namespace YoloLabelTool
                                                 using (Stream streamImage = resImage.GetResponseStream())
                                                 {
                                                     Bitmap b = new Bitmap(streamImage);
-                                                    ZoomImage(b, zoomHeight, zoomWidth).Save(path, System.Drawing.Imaging.ImageFormat.Jpeg);
+                                                    b = ZoomImage(b, zoomHeight, zoomWidth);
+                                                    b.Save("temp.jpg");
+                                                    var gram = GetHisogram(b);
+                                                    if (ExistSimlator(gram))
+                                                    {
+                                                        continue;
+                                                    }
+
+                                                    b.Save(path, System.Drawing.Imaging.ImageFormat.Jpeg);
+                                                    picPaths.Add(path);
                                                     imageCount++;
                                                     downloadImageThread.ReportProgress(imageCount);
                                                     if (imageCount >= imageDownloadCount)
@@ -639,11 +694,10 @@ namespace YoloLabelTool
                                     {
                                         BeginInvoke(new Action(() =>
                                         {
-                                            richTextBoxInfo.AppendText(ex.Message);
+                                            richTextBoxInfo.AppendText(ex.Message + Environment.NewLine);
                                         }));
                                     }
                                 }
-
                             }
                         }
                     }
@@ -706,7 +760,86 @@ namespace YoloLabelTool
                 return bitmap;
             }
         }
+
+        List<int[]> grams = new List<int[]>();
+        List<string> picPaths = new List<string>();
+        bool ExistSimlator(int[] newPic)
+        {
+            int i = 0;
+            foreach (var item in grams)
+            {
+                var diff = GetResult(item, newPic);
+                Console.WriteLine(diff);
+                if (diff > 0.8)
+                {
+                    return true;
+                }
+                i++;
+            }
+            grams.Add(newPic);
+
+            return false;
+        }
+        public int[] GetHisogram(Bitmap img)
+        {
+
+            BitmapData data = img.LockBits(new System.Drawing.Rectangle(0, 0, img.Width, img.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+            int[] histogram = new int[256];
+            unsafe
+            {
+                byte* ptr = (byte*)data.Scan0;
+                int remain = data.Stride - data.Width * 3;
+                for (int i = 0; i < histogram.Length; i++)
+                    histogram[i] = 0;
+                for (int i = 0; i < data.Height; i++)
+                {
+                    for (int j = 0; j < data.Width; j++)
+                    {
+                        int mean = ptr[0] + ptr[1] + ptr[2];
+                        mean /= 3;
+                        histogram[mean]++;
+                        ptr += 3;
+                    }
+                    ptr += remain;
+                }
+            }
+            img.UnlockBits(data);
+            return histogram;
+
+        }
+
+
+        private float GetAbs(int firstNum, int secondNum)
+        {
+            float abs = Math.Abs((float)firstNum - (float)secondNum);
+            float result = Math.Max(firstNum, secondNum);
+            if (result == 0)
+                result = 1;
+            return abs / result;
+
+        }
+
+        public float GetResult(int[] firstNum, int[] scondNum)
+        {
+            if (firstNum.Length != scondNum.Length)
+            {
+                return 0;
+            }
+            else
+            {
+                float result = 0;
+                int j = firstNum.Length;
+                for (int i = 0; i < j; i++)
+                {
+                    result += 1 - GetAbs(firstNum[i], scondNum[i]);
+                }
+                return result / j;
+            }
+        }
+
+
         #endregion
+
 
         private void linkLabelVideo_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
@@ -718,5 +851,49 @@ namespace YoloLabelTool
             System.Diagnostics.Process.Start("https://github.com/sanfooh/quick_yolo2_label_tool");
         }
 
+        private void buttonTrain_Click(object sender, EventArgs e)
+        {
+            trainThread.RunWorkerAsync();
+        }
+
+        private void linkLabelYolo2Weight_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (label1Yolo2Weight.Text=="未下载")
+            {
+                DownloadHelper  helper = new DownloadHelper();
+                helper.Start("https://pjreddie.com/media/files/darknet19_448.conv.23", preWeightPath + "\\darknet19_448.conv.23", progressBarYolo2Weight, label1Yolo2Weight);
+            }
+           
+        }
+
+        private void linkLabelYolo3Weight_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (label1Yolo3Weight.Text == "未下载")
+            {
+                DownloadHelper helper = new DownloadHelper();
+                helper.Start("https://pjreddie.com/media/files/darknet53.conv.74", preWeightPath + "\\darknet53.conv.74", progressBarYolo3Weight, label1Yolo3Weight);
+            }
+        }
+
+
+
+        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (tabControl1.SelectedIndex == 2)
+            {
+                if (File.Exists(preWeightPath + "\\darknet19_448.conv.23"))
+                {
+                    label1Yolo2Weight.Text = "已下载";
+                }
+                if (File.Exists(preWeightPath + "\\darknet53.conv.74"))
+                {
+                    label1Yolo3Weight.Text = "已下载";
+                }
+            }
+        }
+
+
+        
+       
     }
 }
