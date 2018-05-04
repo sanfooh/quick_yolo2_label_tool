@@ -1,6 +1,0 @@
-classes= {0}
-train  = /output/train.txt
-valid  = /output/test.txt
-names = /output/cfg/obj.names
-backup = /output/backup
-

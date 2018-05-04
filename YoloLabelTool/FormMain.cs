@@ -30,6 +30,7 @@ namespace YoloLabelTool
         string objCfgFilePath = "";
         string preWeightPath = "";
         string backupFolder = "";
+        string darknetFolder = "";
 
         const int MaxPageIndex = 1000;
         string imageDownloadPath = "";
@@ -48,6 +49,8 @@ namespace YoloLabelTool
 
         BackgroundWorker trainThread = new BackgroundWorker();
         bool isSrainThreadThreadRun = false;
+
+        BackgroundWorker darknetThread = new BackgroundWorker();
 
         private Point RectStartPoint;
         private Rectangle Rect = new Rectangle();
@@ -73,7 +76,8 @@ namespace YoloLabelTool
             testTxtFilePath = String.Format("{0}\\{1}", outputPath, "test.txt");
             backupFolder = String.Format("{0}\\{1}\\", outputPath, "backup");
             imageDownloadPath = String.Format("{0}\\{1}", Application.StartupPath, "download");
-            
+            darknetFolder = String.Format("{0}\\{1}", Application.StartupPath, "darknet");
+
             if (!Directory.Exists(outputPath))
             {
                 Directory.CreateDirectory(outputPath);
@@ -106,8 +110,11 @@ namespace YoloLabelTool
             downloadImageThread.WorkerReportsProgress = true;
 
             trainThread.DoWork += new DoWorkEventHandler(trainThread_DoWork);
-            trainThread.RunWorkerCompleted += new RunWorkerCompletedEventHandler(trainThread_RunWorkerCompleted);   
+            trainThread.RunWorkerCompleted += new RunWorkerCompletedEventHandler(trainThread_RunWorkerCompleted);
+
         }
+
+    
 
         void trainThread_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
@@ -853,7 +860,12 @@ namespace YoloLabelTool
 
         private void buttonTrain_Click(object sender, EventArgs e)
         {
-            trainThread.RunWorkerAsync();
+            if (Directory.Exists(darknetFolder))
+            {
+                trainThread.RunWorkerAsync();
+            }
+            
+
         }
 
         private void linkLabelYolo2Weight_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -891,6 +903,7 @@ namespace YoloLabelTool
                 }
             }
         }
+
 
 
         

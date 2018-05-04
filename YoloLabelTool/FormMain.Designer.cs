@@ -70,16 +70,16 @@
             this.label2 = new System.Windows.Forms.Label();
             this.buttonDownlaodImage = new System.Windows.Forms.Button();
             this.numericUpDownCount = new System.Windows.Forms.NumericUpDown();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.radioButtonYolo3Weight = new System.Windows.Forms.RadioButton();
-            this.radioButtonYolo2Weight = new System.Windows.Forms.RadioButton();
-            this.progressBarYolo3Weight = new System.Windows.Forms.ProgressBar();
-            this.progressBarYolo2Weight = new System.Windows.Forms.ProgressBar();
-            this.linkLabelYolo3Weight = new System.Windows.Forms.LinkLabel();
-            this.linkLabelYolo2Weight = new System.Windows.Forms.LinkLabel();
-            this.label1Yolo3Weight = new System.Windows.Forms.Label();
-            this.label1Yolo2Weight = new System.Windows.Forms.Label();
             this.buttonTrain = new System.Windows.Forms.Button();
+            this.label1Yolo2Weight = new System.Windows.Forms.Label();
+            this.label1Yolo3Weight = new System.Windows.Forms.Label();
+            this.linkLabelYolo2Weight = new System.Windows.Forms.LinkLabel();
+            this.linkLabelYolo3Weight = new System.Windows.Forms.LinkLabel();
+            this.progressBarYolo2Weight = new System.Windows.Forms.ProgressBar();
+            this.progressBarYolo3Weight = new System.Windows.Forms.ProgressBar();
+            this.radioButtonYolo2Weight = new System.Windows.Forms.RadioButton();
+            this.radioButtonYolo3Weight = new System.Windows.Forms.RadioButton();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPercent)).BeginInit();
@@ -558,6 +558,90 @@
             0,
             0});
             // 
+            // buttonTrain
+            // 
+            this.buttonTrain.Location = new System.Drawing.Point(335, 120);
+            this.buttonTrain.Name = "buttonTrain";
+            this.buttonTrain.Size = new System.Drawing.Size(75, 23);
+            this.buttonTrain.TabIndex = 0;
+            this.buttonTrain.Text = "启动训练";
+            this.buttonTrain.UseVisualStyleBackColor = true;
+            this.buttonTrain.Click += new System.EventHandler(this.buttonTrain_Click);
+            // 
+            // label1Yolo2Weight
+            // 
+            this.label1Yolo2Weight.AutoSize = true;
+            this.label1Yolo2Weight.Location = new System.Drawing.Point(170, 37);
+            this.label1Yolo2Weight.Name = "label1Yolo2Weight";
+            this.label1Yolo2Weight.Size = new System.Drawing.Size(43, 13);
+            this.label1Yolo2Weight.TabIndex = 4;
+            this.label1Yolo2Weight.Text = "未下载";
+            // 
+            // label1Yolo3Weight
+            // 
+            this.label1Yolo3Weight.AutoSize = true;
+            this.label1Yolo3Weight.Location = new System.Drawing.Point(170, 71);
+            this.label1Yolo3Weight.Name = "label1Yolo3Weight";
+            this.label1Yolo3Weight.Size = new System.Drawing.Size(43, 13);
+            this.label1Yolo3Weight.TabIndex = 6;
+            this.label1Yolo3Weight.Text = "未下载";
+            // 
+            // linkLabelYolo2Weight
+            // 
+            this.linkLabelYolo2Weight.AutoSize = true;
+            this.linkLabelYolo2Weight.Location = new System.Drawing.Point(70, 37);
+            this.linkLabelYolo2Weight.Name = "linkLabelYolo2Weight";
+            this.linkLabelYolo2Weight.Size = new System.Drawing.Size(94, 13);
+            this.linkLabelYolo2Weight.TabIndex = 7;
+            this.linkLabelYolo2Weight.TabStop = true;
+            this.linkLabelYolo2Weight.Text = "Yolo2预训练权重";
+            this.linkLabelYolo2Weight.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelYolo2Weight_LinkClicked);
+            // 
+            // linkLabelYolo3Weight
+            // 
+            this.linkLabelYolo3Weight.AutoSize = true;
+            this.linkLabelYolo3Weight.Location = new System.Drawing.Point(70, 73);
+            this.linkLabelYolo3Weight.Name = "linkLabelYolo3Weight";
+            this.linkLabelYolo3Weight.Size = new System.Drawing.Size(94, 13);
+            this.linkLabelYolo3Weight.TabIndex = 7;
+            this.linkLabelYolo3Weight.TabStop = true;
+            this.linkLabelYolo3Weight.Text = "Yolo3预训练权重";
+            this.linkLabelYolo3Weight.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelYolo3Weight_LinkClicked);
+            // 
+            // progressBarYolo2Weight
+            // 
+            this.progressBarYolo2Weight.Location = new System.Drawing.Point(233, 34);
+            this.progressBarYolo2Weight.Name = "progressBarYolo2Weight";
+            this.progressBarYolo2Weight.Size = new System.Drawing.Size(177, 23);
+            this.progressBarYolo2Weight.TabIndex = 8;
+            // 
+            // progressBarYolo3Weight
+            // 
+            this.progressBarYolo3Weight.Location = new System.Drawing.Point(233, 63);
+            this.progressBarYolo3Weight.Name = "progressBarYolo3Weight";
+            this.progressBarYolo3Weight.Size = new System.Drawing.Size(177, 23);
+            this.progressBarYolo3Weight.TabIndex = 9;
+            // 
+            // radioButtonYolo2Weight
+            // 
+            this.radioButtonYolo2Weight.AutoSize = true;
+            this.radioButtonYolo2Weight.Checked = true;
+            this.radioButtonYolo2Weight.Location = new System.Drawing.Point(49, 36);
+            this.radioButtonYolo2Weight.Name = "radioButtonYolo2Weight";
+            this.radioButtonYolo2Weight.Size = new System.Drawing.Size(14, 13);
+            this.radioButtonYolo2Weight.TabIndex = 10;
+            this.radioButtonYolo2Weight.TabStop = true;
+            this.radioButtonYolo2Weight.UseVisualStyleBackColor = true;
+            // 
+            // radioButtonYolo3Weight
+            // 
+            this.radioButtonYolo3Weight.AutoSize = true;
+            this.radioButtonYolo3Weight.Location = new System.Drawing.Point(49, 71);
+            this.radioButtonYolo3Weight.Name = "radioButtonYolo3Weight";
+            this.radioButtonYolo3Weight.Size = new System.Drawing.Size(14, 13);
+            this.radioButtonYolo3Weight.TabIndex = 11;
+            this.radioButtonYolo3Weight.UseVisualStyleBackColor = true;
+            // 
             // tabPage3
             // 
             this.tabPage3.Controls.Add(this.radioButtonYolo3Weight);
@@ -576,90 +660,6 @@
             this.tabPage3.Text = "训练";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
-            // radioButtonYolo3Weight
-            // 
-            this.radioButtonYolo3Weight.AutoSize = true;
-            this.radioButtonYolo3Weight.Location = new System.Drawing.Point(49, 71);
-            this.radioButtonYolo3Weight.Name = "radioButtonYolo3Weight";
-            this.radioButtonYolo3Weight.Size = new System.Drawing.Size(14, 13);
-            this.radioButtonYolo3Weight.TabIndex = 11;
-            this.radioButtonYolo3Weight.UseVisualStyleBackColor = true;
-            // 
-            // radioButtonYolo2Weight
-            // 
-            this.radioButtonYolo2Weight.AutoSize = true;
-            this.radioButtonYolo2Weight.Checked = true;
-            this.radioButtonYolo2Weight.Location = new System.Drawing.Point(49, 36);
-            this.radioButtonYolo2Weight.Name = "radioButtonYolo2Weight";
-            this.radioButtonYolo2Weight.Size = new System.Drawing.Size(14, 13);
-            this.radioButtonYolo2Weight.TabIndex = 10;
-            this.radioButtonYolo2Weight.TabStop = true;
-            this.radioButtonYolo2Weight.UseVisualStyleBackColor = true;
-            // 
-            // progressBarYolo3Weight
-            // 
-            this.progressBarYolo3Weight.Location = new System.Drawing.Point(233, 63);
-            this.progressBarYolo3Weight.Name = "progressBarYolo3Weight";
-            this.progressBarYolo3Weight.Size = new System.Drawing.Size(177, 23);
-            this.progressBarYolo3Weight.TabIndex = 9;
-            // 
-            // progressBarYolo2Weight
-            // 
-            this.progressBarYolo2Weight.Location = new System.Drawing.Point(233, 34);
-            this.progressBarYolo2Weight.Name = "progressBarYolo2Weight";
-            this.progressBarYolo2Weight.Size = new System.Drawing.Size(177, 23);
-            this.progressBarYolo2Weight.TabIndex = 8;
-            // 
-            // linkLabelYolo3Weight
-            // 
-            this.linkLabelYolo3Weight.AutoSize = true;
-            this.linkLabelYolo3Weight.Location = new System.Drawing.Point(70, 73);
-            this.linkLabelYolo3Weight.Name = "linkLabelYolo3Weight";
-            this.linkLabelYolo3Weight.Size = new System.Drawing.Size(94, 13);
-            this.linkLabelYolo3Weight.TabIndex = 7;
-            this.linkLabelYolo3Weight.TabStop = true;
-            this.linkLabelYolo3Weight.Text = "Yolo3预训练权重";
-            this.linkLabelYolo3Weight.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelYolo3Weight_LinkClicked);
-            // 
-            // linkLabelYolo2Weight
-            // 
-            this.linkLabelYolo2Weight.AutoSize = true;
-            this.linkLabelYolo2Weight.Location = new System.Drawing.Point(70, 37);
-            this.linkLabelYolo2Weight.Name = "linkLabelYolo2Weight";
-            this.linkLabelYolo2Weight.Size = new System.Drawing.Size(94, 13);
-            this.linkLabelYolo2Weight.TabIndex = 7;
-            this.linkLabelYolo2Weight.TabStop = true;
-            this.linkLabelYolo2Weight.Text = "Yolo2预训练权重";
-            this.linkLabelYolo2Weight.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelYolo2Weight_LinkClicked);
-            // 
-            // label1Yolo3Weight
-            // 
-            this.label1Yolo3Weight.AutoSize = true;
-            this.label1Yolo3Weight.Location = new System.Drawing.Point(170, 71);
-            this.label1Yolo3Weight.Name = "label1Yolo3Weight";
-            this.label1Yolo3Weight.Size = new System.Drawing.Size(43, 13);
-            this.label1Yolo3Weight.TabIndex = 6;
-            this.label1Yolo3Weight.Text = "未下载";
-            // 
-            // label1Yolo2Weight
-            // 
-            this.label1Yolo2Weight.AutoSize = true;
-            this.label1Yolo2Weight.Location = new System.Drawing.Point(170, 37);
-            this.label1Yolo2Weight.Name = "label1Yolo2Weight";
-            this.label1Yolo2Weight.Size = new System.Drawing.Size(43, 13);
-            this.label1Yolo2Weight.TabIndex = 4;
-            this.label1Yolo2Weight.Text = "未下载";
-            // 
-            // buttonTrain
-            // 
-            this.buttonTrain.Location = new System.Drawing.Point(335, 145);
-            this.buttonTrain.Name = "buttonTrain";
-            this.buttonTrain.Size = new System.Drawing.Size(75, 23);
-            this.buttonTrain.TabIndex = 0;
-            this.buttonTrain.Text = "启动训练";
-            this.buttonTrain.UseVisualStyleBackColor = true;
-            this.buttonTrain.Click += new System.EventHandler(this.buttonTrain_Click);
-            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -668,7 +668,7 @@
             this.Controls.Add(this.tabControl1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FormMain";
-            this.Text = "YOLO快速图像标注工具1.1";
+            this.Text = "YOLO快速图像标注工具1.2";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.FormMain_Load);
             this.tabControl1.ResumeLayout(false);
@@ -734,15 +734,15 @@
         private System.Windows.Forms.LinkLabel linkLabelGithub;
         private System.Windows.Forms.LinkLabel linkLabelVideo;
         private System.Windows.Forms.TabPage tabPage3;
-        private System.Windows.Forms.Button buttonTrain;
+        private System.Windows.Forms.RadioButton radioButtonYolo3Weight;
+        private System.Windows.Forms.RadioButton radioButtonYolo2Weight;
         private System.Windows.Forms.ProgressBar progressBarYolo3Weight;
         private System.Windows.Forms.ProgressBar progressBarYolo2Weight;
         private System.Windows.Forms.LinkLabel linkLabelYolo3Weight;
         private System.Windows.Forms.LinkLabel linkLabelYolo2Weight;
         private System.Windows.Forms.Label label1Yolo3Weight;
         private System.Windows.Forms.Label label1Yolo2Weight;
-        private System.Windows.Forms.RadioButton radioButtonYolo3Weight;
-        private System.Windows.Forms.RadioButton radioButtonYolo2Weight;
+        private System.Windows.Forms.Button buttonTrain;
 
     }
 }
