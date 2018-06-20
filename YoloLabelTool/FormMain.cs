@@ -47,6 +47,10 @@ namespace YoloLabelTool
         BackgroundWorker downloadImageThread = new BackgroundWorker();
         bool isDownloadImageThreadRun = false;
 
+
+        BackgroundWorker importFilesThread = new BackgroundWorker();
+        bool isImportFilesThreadRun = false;
+
         BackgroundWorker trainThread = new BackgroundWorker();
         bool isSrainThreadThreadRun = false;
 
@@ -109,12 +113,36 @@ namespace YoloLabelTool
             downloadImageThread.RunWorkerCompleted += new RunWorkerCompletedEventHandler(downloadImageThread_RunWorkerCompleted);
             downloadImageThread.WorkerReportsProgress = true;
 
+
+            importFilesThread.DoWork += ImportFilesThread_DoWork;
+            importFilesThread.ProgressChanged += ImportFilesThread_ProgressChanged;
+            importFilesThread.RunWorkerCompleted += ImportFilesThread_RunWorkerCompleted;
+            importFilesThread.WorkerReportsProgress = true;
+
+
+
             trainThread.DoWork += new DoWorkEventHandler(trainThread_DoWork);
             trainThread.RunWorkerCompleted += new RunWorkerCompletedEventHandler(trainThread_RunWorkerCompleted);
 
         }
 
-    
+        private void ImportFilesThread_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            progressBarImport.Value = 0;
+        }
+
+        private void ImportFilesThread_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            progressBarImport.Value = e.ProgressPercentage;
+        }
+
+        private void ImportFilesThread_DoWork(object sender, DoWorkEventArgs e)
+        {
+            ImportFiles((string)e.Argument);
+            
+        }
+
+
 
         void trainThread_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
@@ -216,6 +244,11 @@ namespace YoloLabelTool
         {
             string cfgContent = File.ReadAllText("yolo-voc.cfg");
             cfgContent = cfgContent.Replace("classes=20", "classes=" + listBoxLableIndex.Items.Count).Replace("filters=125", "filters=30");
+            var dirName = Path.GetDirectoryName(objCfgFilePath);
+            if (Directory.Exists(dirName))
+            {
+                Directory.CreateDirectory(dirName);
+            }
             File.WriteAllText(objCfgFilePath, cfgContent.Trim());
         }
 
@@ -232,7 +265,8 @@ namespace YoloLabelTool
             {
                 filePaths.Add(item.ToString());
             }
-            filePaths.Sort(delegate(string a, string b) { return (new Random()).Next(-1, 1); });
+            //filePaths.Sort(delegate(string a, string b) { return (new Random()).Next(-1, 1); });
+            filePaths=filePaths.Select(a => new { a, newID = Guid.NewGuid() }).OrderBy(b => b.newID).Select(c => c.a).ToList();
             var testCount = (int)((double)filePaths.Count() * (int)numericUpDownPercent.Value / 100);
             var testTxtFileContent = "";
             var trainTxtFileContent = "";
@@ -277,18 +311,34 @@ namespace YoloLabelTool
 
         void ImportFiles(string path)
         {
+            
             if (Directory.Exists(path))
             {
                 var importDir = new DirectoryInfo(path);
-                foreach (var file in importDir.GetFiles())
+                var files = importDir.GetFiles();
+                var count = files.Count();
+                int index = 0;
+                foreach (var file in files)
                 {
+                    index++;
                     if (file.Extension == ".jpg")
                     {
                         string desFilePath = imagePath + file.Name;
                         if (!File.Exists(desFilePath))
                         {
-                            File.Copy(file.FullName, imagePath + file.Name, true);
-                            listBoxFiles.Items.Add(imagePath + file.Name);
+                            //File.Copy(file.FullName, imagePath + file.Name, true);
+                            var image = Bitmap.FromFile(file.FullName);
+                            var f = ZoomImage(new Bitmap(image), (int)numericUpDownImportHeight.Value, (int)numericUpDownImportHeight.Value);
+                            f.Save(imagePath + file.Name, System.Drawing.Imaging.ImageFormat.Jpeg);
+                            f.Dispose();
+                            image.Dispose();
+                            importFilesThread.ReportProgress((int)(((float)index/(float)count)*100));
+                            FileInfo fi = new FileInfo(imagePath + file.Name);
+                            if (fi.IsReadOnly)
+                            {
+                                fi.IsReadOnly = false;
+                            }
+                            BeginInvoke(new Action(()=> { listBoxFiles.Items.Add(imagePath + file.Name); }));
                         }
                     }
                 }
@@ -438,6 +488,12 @@ namespace YoloLabelTool
                 {
                     if (listBoxFiles.SelectedItems.Count == 1)
                     {
+                        FileInfo fi = new FileInfo(listBoxFiles.SelectedItem.ToString());
+                        if (fi.IsReadOnly)
+                        {
+                            fi.IsReadOnly = false; 
+
+                        }
                         File.Delete(listBoxFiles.SelectedItem.ToString());
                         File.Delete(listBoxFiles.SelectedItem.ToString().Replace(".jpg", ".txt"));
                         listBoxLable.Items.Clear();
@@ -449,16 +505,26 @@ namespace YoloLabelTool
                         }
                     }
                     else
+                    if (listBoxFiles.SelectedItems.Count == 0)
                     {
-
+                        return;
+                    }
+                    else
+                    {
                         foreach (var item in listBoxFiles.SelectedItems)
                         {
+                            FileInfo fi = new FileInfo(item.ToString());
+                            if (fi.IsReadOnly)
+                            {
+                                fi.IsReadOnly = false;
+                            }
                             File.Delete(item.ToString());
                             File.Delete(item.ToString().Replace(".jpg", ".txt"));
-                            listBoxLable.Items.Clear();
                         }
+
+                        listBoxLable.Items.Clear();
                         listBoxFiles.Items.Clear();
-                        var dir = new DirectoryInfo(outputPath);
+                        var dir = new DirectoryInfo(imagePath);
                         foreach (var file in dir.GetFiles())
                         {
                             if (file.Extension == ".jpg")
@@ -470,6 +536,16 @@ namespace YoloLabelTool
                     CreateTestTrainTxt();
                 }
             }
+
+            if (e.Modifiers == Keys.Control && e.KeyCode == Keys.A)
+            {
+                for (int i = 0; i < listBoxFiles.Items.Count; i++)
+                {
+                    listBoxFiles.SelectedIndex = i;
+                }
+             }
+
+
         }
 
         private void buttonClear_Click(object sender, EventArgs e)
@@ -759,6 +835,8 @@ namespace YoloLabelTool
                 quality[0] = 100;
                 System.Drawing.Imaging.EncoderParameter encoderParam = new System.Drawing.Imaging.EncoderParameter(System.Drawing.Imaging.Encoder.Quality, quality);
                 encoderParams.Param[0] = encoderParam;
+                sourImage.Dispose();
+                bitmap.Dispose();
                 sourImage.Dispose();
                 return destBitmap;
             }
