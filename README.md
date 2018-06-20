@@ -12,5 +12,8 @@
 > * 生成三个配置需要人工去检查一下相应的目录，保证训练没有问题，如对三个配置文件有疑惑可参考[这里](https://github.com/sanfooh/yolo_truck)。
 > * 已添加自动抓取图片功能
 
+## 安装
+如果不想编译可执行文件，在下载源代码以后，打开目录trunk\YoloLabelTool\bin\Debug里面有TFLabelTool.exe，可以直接运行，如果提示需要framework,请先安装framework4.0
+
 ## 操作截图
 ![demo](https://github.com/sanfooh/quick_yolo2_label_tool/blob/master/demo.gif)
